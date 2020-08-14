@@ -1,0 +1,245 @@
+{
+	"info": {
+		"_postman_id": "47234fb4-4720-46e2-9709-7514de54da73",
+		"name": "oauth and authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Acquire temporary token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6f74bf65-8350-43eb-b14e-5c3f1c6f50a7",
+						"exec": [
+							"var response = pm.response.text();",
+							"",
+							"var oauth_token = response.substr(12,32);",
+							"pm.environment.set(\"oauth_token\", oauth_token);",
+							"",
+							"var oauth_token_secret = response.substr(64,32);",
+							"pm.environment.set(\"oauth_token_secret\", oauth_token_secret);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth1",
+					"oauth1": [
+						{
+							"key": "callback",
+							"value": "https://www.tmsandbox.co.nz/motors",
+							"type": "string"
+						},
+						{
+							"key": "includeBodyHash",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "consumerSecret",
+							"value": "{{consumerSecret}}",
+							"type": "string"
+						},
+						{
+							"key": "consumerKey",
+							"value": "{{consumerKey}}",
+							"type": "string"
+						},
+						{
+							"key": "addParamsToHeader",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "addEmptyParamsToSign",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "tokenSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "signatureMethod",
+							"value": "PLAINTEXT",
+							"type": "string"
+						},
+						{
+							"key": "version",
+							"value": "1.0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://secure.tmsandbox.co.nz/Oauth/RequestToken?scope=MyTradeMeRead,MyTradeMeWrite",
+					"protocol": "https",
+					"host": [
+						"secure",
+						"tmsandbox",
+						"co",
+						"nz"
+					],
+					"path": [
+						"Oauth",
+						"RequestToken"
+					],
+					"query": [
+						{
+							"key": "scope",
+							"value": "MyTradeMeRead,MyTradeMeWrite"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authorize access to user account",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://secure.tmsandbox.co.nz/Oauth/Authorize?oauth_token={{oauth_token}}&oauth_verifier={{oauth_verifier}}",
+					"protocol": "https",
+					"host": [
+						"secure",
+						"tmsandbox",
+						"co",
+						"nz"
+					],
+					"path": [
+						"Oauth",
+						"Authorize"
+					],
+					"query": [
+						{
+							"key": "oauth_token",
+							"value": "{{oauth_token}}"
+						},
+						{
+							"key": "oauth_verifier",
+							"value": "{{oauth_verifier}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Acquire final token and request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2ae7e41d-cf0e-433c-9807-7626bf14f827",
+						"exec": [
+							"var consumerSecret = pm.environment.get(\"consumerSecret\");",
+							"var oauthTokenSecret = pm.environment.get(\"oauth_token_secret\");",
+							"var oauthSignature =consumerSecret+'%26'+oauthTokenSecret;",
+							"pm.environment.set(\"oauth_signature\",oauthSignature);",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "bfb61514-8bd7-4a15-b8a0-607fb32138c9",
+						"exec": [
+							"var response = pm.response.text();",
+							"",
+							"var final_oauth_token = response.substr(12,32);",
+							"pm.environment.set(\"final_oauth_token\", final_oauth_token);",
+							"",
+							"var final_oauth_token_secret = response.substr(64,32);",
+							"pm.environment.set(\"final_oauth_token_secret\", final_oauth_token_secret);",
+							"",
+							"var consumerSecret = pm.environment.get(\"consumerSecret\");",
+							"",
+							"var final_auth_signature = consumerSecret+'%26'+final_oauth_token_secret;",
+							"pm.environment.set(\"final_oauth_signature\",final_auth_signature);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "OAuth oauth_verifier=\"{{oauth_verifier}}\",oauth_consumer_key=\"{{consumerKey}}\",oauth_token=\"{{oauth_token}}\",oauth_signature_method=\"PLAINTEXT\",oauth_signature=\"{{oauth_signature}}\"",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://secure.tmsandbox.co.nz/Oauth/AccessToken",
+					"protocol": "https",
+					"host": [
+						"secure",
+						"tmsandbox",
+						"co",
+						"nz"
+					],
+					"path": [
+						"Oauth",
+						"AccessToken"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "6506d852-dc31-47f0-92b2-297f014f4ee2",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a97998d0-f07f-4c1f-99ba-e966381ae857",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

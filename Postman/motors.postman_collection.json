@@ -1,0 +1,221 @@
+{
+	"info": {
+		"_postman_id": "f17475a7-5366-4372-ad15-29f110568230",
+		"name": "motors",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Used motors search",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "41b5f11b-08f5-42ea-9c09-7cdc9e23b2f1",
+						"exec": [
+							"var response = pm.response.json();",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify the TotalCount is greater than 0\", function(){",
+							"    var actualTotalCount = response.TotalCount;",
+							"    pm.expect(actualTotalCount>0);",
+							"})",
+							"",
+							"pm.test(\"Verify the List array is not an empty Array\", function(){",
+							"    var listArray = response.List;",
+							"    pm.expect(listArray).to.be.an('array').that.is.not.empty;",
+							"})",
+							"",
+							"pm.test(\"Verify that the Make Mazda exists\", function(){",
+							"    kiaCarMake = response.List.filter(x=>x.Make ==\"Kia\");",
+							"    pm.expect(kiaCarMake.length>0);",
+							"   ",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth1",
+					"oauth1": [
+						{
+							"key": "consumerSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "addParamsToHeader",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "disableHeaderEncoding",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "addEmptyParamsToSign",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "includeBodyHash",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "callback",
+							"value": "https://www.tmsandbox.co.nz/motors",
+							"type": "string"
+						},
+						{
+							"key": "token",
+							"value": "{{oauth_token}}",
+							"type": "string"
+						},
+						{
+							"key": "tokenSecret",
+							"value": "{{final_oauth_signature}}",
+							"type": "string"
+						},
+						{
+							"key": "signatureMethod",
+							"value": "HMAC-SHA1",
+							"type": "string"
+						},
+						{
+							"key": "consumerKey",
+							"value": "{{consumerKey}}",
+							"type": "string"
+						},
+						{
+							"key": "version",
+							"value": "1.0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{sandboxApiUrl}}/v1/Search/Motors/Used.json",
+					"host": [
+						"{{sandboxApiUrl}}"
+					],
+					"path": [
+						"v1",
+						"Search",
+						"Motors",
+						"Used.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve the details of one listing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1bff8e1b-741b-46a4-a450-bff867186de7",
+						"exec": [
+							"var response = pm.response.json();",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    console.log(\"as\");",
+							"});",
+							"",
+							"pm.test(\"Verify the Number Plate is: '\"+pm.environment.get(\"numberPlate\")+\"'\",function(){",
+							"    var actualNumberPlate = response.Attributes[1].Value;",
+							"    var expectedNumberPlate = pm.environment.get(\"numberPlate\");",
+							"    pm.expect(actualNumberPlate).to.equal(expectedNumberPlate);",
+							"});",
+							"",
+							"pm.test(\"Verify the Kilometres is: '\"+pm.environment.get(\"kilometres\")+\"'\",function(){",
+							"    var actualKilometres = response.Attributes[3].Value;",
+							"    var expectedKilometres = pm.environment.get(\"kilometres\");",
+							"    pm.expect(actualKilometres).to.equal(expectedKilometres);",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://api.tmsandbox.co.nz/v1/Listings/2149103431.json",
+					"protocol": "http",
+					"host": [
+						"api",
+						"tmsandbox",
+						"co",
+						"nz"
+					],
+					"path": [
+						"v1",
+						"Listings",
+						"2149103431.json"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "8bffddd1-349a-4e69-8e4d-1d91e3139460",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "310defcd-ad9a-407a-be31-a0397ac8a674",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
