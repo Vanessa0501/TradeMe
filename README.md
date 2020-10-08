@@ -11,5 +11,5 @@
 -- Tried encoding the Oauth before parsing it but still did not work
 
 -- I have done my API tests in Postman
--- The data is change in Sandbox Trademe and that is why I am pushing my work.
+-- The data is changing in Sandbox Trademe and that is why I am pushing my work.
 
